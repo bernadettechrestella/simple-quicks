@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import arrowLeft from '../assets/icons/arrowLeft.svg'
 import close from '../assets/icons/close.svg'
 import threeDots from '../assets/icons/threeDots.svg'
@@ -9,13 +9,22 @@ const CardMessage = (props) => {
 
     const {comments, getPostComments} = useGetInbox();
 
+    const [openButton, setOpenButton] = useState(false);
+    const [openButtonIndex, setOpenButtonIndex] = useState(null);
+
     const userColors = {};
 
     useEffect(() => {
         getPostComments(postID)
     }, [])
 
-    console.log(comments)
+    const handleClickDotsIndex = (index) => {
+        setOpenButtonIndex(openButtonIndex === index ? null : index);
+    }
+
+    const handleClickDots = () => {
+        setOpenButton(!openButton)
+    }
     
 
 
@@ -38,13 +47,22 @@ const CardMessage = (props) => {
             <p className='text-chatPurple font-bold flex justify-end'>You</p>
             <div className='mb-[10px] flex justify-end'>
                 <div className='flex gap-2'>
-                    <img src={threeDots} alt="options" className='h-[24px] w-[24px]'/>
-                    <div className='max-w-[518px] h-auto bg-chatSoftPurple p-2 rounded-[5px]'>
+                    <div className='relative'>
+                        <img src={threeDots} alt="options" className='h-[24px] w-[24px] cursor-pointer' onClick={handleClickDots}/>
+                        {openButton ? 
+                            <div className='w-[126px] flex flex-col z-20 absolute top-[20px] left-0'>
+                                <button className='border-2 border-primaryLightGray bg-white rounded-t-[5px] text-primaryBlue text-left pl-[18px] h-[40px]'>Edit</button>
+                                <button className='border-x-2 border-b-2 border-primaryLightGray bg-white rounded-b-[5px] text-indicatorRed text-left pl-[18px] h-[40px]'>Delete</button>
+                            </div> 
+                            : ''}
+                    </div>
+                    <div className='max-w-[518px] h-auto bg-chatSoftPurple p-2 rounded-[5px] z-10'>
                         <p>{postBody}</p>
                         <p>19:32</p>
                     </div>
                 </div>
             </div>
+                
 
             {comments && comments.length > 0 ? (
                 <fieldset className="border-t border-primaryDarkGray">
@@ -71,7 +89,17 @@ const CardMessage = (props) => {
                         <p>{comment.body}</p>
                         <p>19:32</p>
                     </div>
-                    <img src={threeDots} alt="options" className='h-[24px] w-[24px]' />
+
+                    <div className='relative'>
+                        <img src={threeDots} alt="options" className='h-[24px] w-[24px] cursor-pointer' onClick={() => handleClickDotsIndex(index)}/>
+                        
+                        {openButtonIndex === index ? 
+                            <div className='w-[126px] flex flex-col z-20 absolute top-[20px] right-0'>
+                                <button className='border-2 border-primaryLightGray bg-white rounded-t-[5px] text-primaryBlue text-left pl-[18px] h-[40px]'>Share</button>
+                                <button className='border-x-2 border-b-2 border-primaryLightGray bg-white rounded-b-[5px] text-primaryBlue text-left pl-[18px] h-[40px]'>Reply</button>
+                            </div> 
+                            : ''}
+                    </div>
                 </div>
                 </div>
             );
